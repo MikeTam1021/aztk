@@ -19,30 +19,17 @@ RUN  useradd -m -d /home/rstudio rstudio -G sudo,staff \
   && chmod -R 777 /home/rstudio \
   && chmod -R 777 //.pyenv/
 
-# Setting up rstudio user
+# Setting up rstudio user with Tensorflow and CNTK
 USER rstudio
-ENV HOME=/home/rstudio
-ENV USER_PYTHON_VERSION $USER_PYTHON_VERSION
-ENV PATH $HOME/.pyenv/shims:$HOME/.pyenv/bin:$PATH
-ENV PYENV_ROOT=/home/rstudio/.pyenv
-
-RUN git clone git://github.com/yyuu/pyenv.git $HOME/.pyenv \
-    # install & setup pyenv
-    && eval "$(pyenv init -)" \
-    && echo 'eval "$(pyenv init -)"' >> $HOME/.bashrc \
-    # install aztk required python version 
-    && env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install -f $USER_PYTHON_VERSION \
-    && pyenv global $USER_PYTHON_VERSION \
-    # install tensorflow & cntk
-    && pip3 install \
-      $CNTK_GPU_VERSION \
-      tensorflow-gpu \
-      keras \
-    && echo "PATH='"$PATH"'" > $HOME/.Renviron
+RUN  echo "PATH='"$PATH"'" > /home/rstudio/.Renviron \
+  && pip3 install \
+    $CNTK_GPU_VERSION \
+    tensorflow-gpu \
+    keras
 
 USER root
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+  && apt-get install -y --no-install-recommends \
     bash-completion \
     ca-certificates \
     file \
@@ -153,4 +140,3 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 CMD ["/bin/bash"]
-  
