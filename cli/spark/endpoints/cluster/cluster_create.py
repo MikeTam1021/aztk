@@ -56,7 +56,7 @@ def execute(args: typing.NamedTuple):
             password=args.password,
         ),
         docker_repo=args.docker_repo))
-    wait = wait or args.wait
+    wait = wait if args.wait is None else args.wait
 
     print_cluster_conf(cluster_conf, wait)
 

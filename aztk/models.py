@@ -99,12 +99,18 @@ class ClusterConfiguration(ConfigurationBase):
             "custom_scripts",
             "file_shares",
             "cluster_id",
-            "vm_count",
-            "vm_low_pri_count",
             "vm_size",
             "subnet_id",
             "docker_repo",
         ])
+
+        # Have to do this to prevent mixed mode and allow to override only on of the attibutes
+        if other.vm_count is not None:
+            self.vm_count = other.vm_count
+            self.vm_low_pri_count = 0
+        elif other.vm_low_pri_count is not None:
+            self.vm_low_pri_count = other.vm_low_pri_count
+            self.vm_count = 0
 
         if other.user_configuration:
             self.user_configuration.merge(other.user_configuration)
@@ -119,21 +125,13 @@ class ClusterConfiguration(ConfigurationBase):
             raise error.AztkError(
                 "Please supply an id for the cluster with a parameter (--id)")
 
-        if self.size == 0 and self.size_low_pri == 0:
+        if self.vm_count == 0 and self.vm_low_pri_count == 0:
             raise error.AztkError(
                 "Please supply a valid (greater than 0) size or size_low_pri value either in the cluster.yaml configuration file or with a parameter (--size or --size-low-pri)")
 
         if self.vm_size is None:
             raise error.AztkError(
                 "Please supply a vm_size in either the cluster.yaml configuration file or with a parameter (--vm-size)")
-
-        if self.wait is None:
-            raise error.AztkError(
-                "Please supply a value for wait in either the cluster.yaml configuration file or with a parameter (--wait or --no-wait)")
-
-        if self.username is not None and self.wait is False:
-            raise error.AztkError(
-                "You cannot create a user '{0}' if wait is set to false. By default, we create a user in the cluster.yaml file. Please either the configure your cluster.yaml file or set the parameter (--wait)".format(self.username))
 
 
 class RemoteLogin:
