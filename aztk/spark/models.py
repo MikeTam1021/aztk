@@ -89,7 +89,7 @@ class ClusterConfiguration(aztk.models.ClusterConfiguration):
         self.spark_configuration = spark_configuration
 
     def gpu_enabled(self):
-        self.gpu_enabled = helpers.is_gpu_enabled(self.vm_size)
+        return helpers.is_gpu_enabled(self.vm_size)
 
 
 class SecretsConfiguration(aztk.models.SecretsConfiguration):
