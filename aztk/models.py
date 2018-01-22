@@ -94,7 +94,7 @@ class ClusterConfiguration(ConfigurationBase):
         Merge other cluster config into this one.
         :params other: ClusterConfiguration
         """
-        print("Merge id", self.cluster_id, other.cluster_id)
+
         self._merge_attributes(other, [
             "custom_scripts",
             "file_shares",
