@@ -28,7 +28,7 @@ class Client(BaseClient):
 
             start_task = create_cluster_helper.generate_cluster_start_task(self,
                                                                            zip_resource_files,
-                                                                           cluster_conf.gpu_enabled,
+                                                                           cluster_conf.gpu_enabled(),
                                                                            cluster_conf.docker_repo,
                                                                            cluster_conf.file_shares)
 
@@ -137,7 +137,7 @@ class Client(BaseClient):
             return task.state._value_
         except batch_error.BatchErrorException as e:
             raise error.AztkError(helpers.format_batch_exception(e))
-    
+
     '''
         job submission
     '''
@@ -180,7 +180,7 @@ class Client(BaseClient):
             else:
                 raise error.AztkError("Jobs do not support both dedicated and low priority nodes." \
                                       " JobConfiguration fields max_dedicated_nodes and max_low_pri_nodes are mutually exclusive values.")
-            
+
             job = self.__submit_job(
                 job_configuration=job_configuration,
                 start_task=start_task,
