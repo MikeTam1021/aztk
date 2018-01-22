@@ -105,12 +105,15 @@ class ClusterConfiguration(ConfigurationBase):
         ])
 
         # Have to do this to prevent mixed mode and allow to override only on of the attibutes
-        if other.vm_count is not None:
+        if other.vm_count:
             self.vm_count = other.vm_count
-            self.vm_low_pri_count = 0
-        elif other.vm_low_pri_count is not None:
+            if other.vm_count != 0:
+                self.vm_low_pri_count = 0
+
+        if other.vm_low_pri_count:
             self.vm_low_pri_count = other.vm_low_pri_count
-            self.vm_count = 0
+            if other.vm_low_pri_count != 0:
+                self.vm_count = 0
 
         if other.user_configuration:
             self.user_configuration.merge(other.user_configuration)

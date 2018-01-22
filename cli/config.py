@@ -142,11 +142,11 @@ def cluster_config_from_dict(config: ClusterConfiguration):
     if config.get('vm_size') is not None:
         output.vm_size = config['vm_size']
 
-    if config.get('size') is not None:
+    if config.get('size'):
         output.vm_count = config['size']
         output.vm_low_pri_count = 0
 
-    if config.get('size_low_pri') is not None:
+    if config.get('size_low_pri'):
         output.vm_low_pri_count = config['size_low_pri']
         output.vm_count = 0
 
