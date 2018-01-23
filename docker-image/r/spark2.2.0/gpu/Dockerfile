@@ -4,8 +4,8 @@ FROM aztk/gpu:spark2.2.0
 # modify these ARGs on build time to specify your desired versions of Spark/Hadoop
 ARG R_VERSION=3.4.1
 ARG RSTUDIO_SERVER_VERSION=1.1.383
-ARG USER_PYTHON_VERSION=3.5.4
-ARG CNTK_GPU_VERSION=https://cntk.ai/PythonWheel/GPU/cntk-2.3.1-cp35-cp35m-linux_x86_64.whl
+ARG TENSORFLOW_VERSION=tensorflow-gpu
+ARG CNTK_VERSION=https://cntk.ai/PythonWheel/GPU/cntk-2.3.1-cp35-cp35m-linux_x86_64.whl
 ARG BUILD_DATE
 
 # set env vars
@@ -23,8 +23,8 @@ RUN  useradd -m -d /home/rstudio rstudio -G sudo,staff \
 USER rstudio
 RUN  echo "PATH='"$PATH"'" > /home/rstudio/.Renviron \
   && pip3 install \
-    $CNTK_GPU_VERSION \
-    tensorflow-gpu \
+    $CNTK_VERSION \
+    $TENSORFLOW_VERSION \
     keras
 
 USER root
@@ -110,14 +110,16 @@ RUN apt-get update \
   && make \
   && make install \
   ## Add a default CRAN mirror
-  && echo "options(repos = c(CRAN = 'https://cran.rstudio.com/'), download.file.method = 'libcurl')" >> /usr/local/lib/R/etc/Rprofile.site \
+  && echo "options(repos = c(CRAN = 'https://cran.rstudio.com/'), download.file.method = 'libcurl')" \
+    >> /usr/local/lib/R/etc/Rprofile.site \
   ## Add a library directory (for user-installed packages)
   && mkdir -p /usr/local/lib/R/site-library \
   && chown root:staff /usr/local/lib/R/site-library \
   && chmod g+wx /usr/local/lib/R/site-library \
   ## Fix library path
   && echo "R_LIBS_USER='/usr/local/lib/R/site-library'" >> /usr/local/lib/R/etc/Renviron \
-  && echo "R_LIBS=\${R_LIBS-'/usr/local/lib/R/site-library:/usr/local/lib/R/library:/usr/lib/R/library'}" >> /usr/local/lib/R/etc/Renviron \
+  && echo "R_LIBS=\${R_LIBS-'/usr/local/lib/R/site-library:/usr/local/lib/R/library:/usr/lib/R/library'}" \
+    >> /usr/local/lib/R/etc/Renviron \
   ## install packages from date-locked MRAN snapshot of CRAN
   && [ -z "$BUILD_DATE" ] && BUILD_DATE=$(TZ="America/Los_Angeles" date -I) || true \
   && MRAN=https://mran.microsoft.com/snapshot/${BUILD_DATE} \

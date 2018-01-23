@@ -4,7 +4,8 @@ FROM aztk/gpu:spark1.6.3
 # modify these ARGs on build time to specify your desired versions of Spark/Hadoop
 ARG R_VERSION=3.4.1
 ARG RSTUDIO_SERVER_VERSION=1.1.383
-ARG CNTK_GPU_VERSION=https://cntk.ai/PythonWheel/GPU/cntk-2.3.1-cp35-cp35m-linux_x86_64.whl
+ARG TENSORFLOW_VERSION=tensorflow-gpu
+ARG CNTK_VERSION=https://cntk.ai/PythonWheel/GPU/cntk-2.3.1-cp35-cp35m-linux_x86_64.whl
 ARG BUILD_DATE
 
 # set env vars
@@ -22,8 +23,8 @@ RUN  useradd -m -d /home/rstudio rstudio -G sudo,staff \
 USER rstudio
 RUN  echo "PATH='"$PATH"'" > /home/rstudio/.Renviron \
   && pip3 install \
-    $CNTK_GPU_VERSION \
-    tensorflow-gpu \
+    $CNTK_VERSION \
+    $TENSORFLOW_VERSION \
     keras
 
 USER root
